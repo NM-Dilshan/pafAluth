@@ -29,7 +29,11 @@ public class AuthService {
     }
 
     public AuthResponse staffLogin(StaffLoginRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
+        String normalizedUsername = request.getUsername() == null
+            ? ""
+            : request.getUsername().trim().toLowerCase();
+
+        User user = userRepository.findByUsernameIgnoreCase(normalizedUsername)
             .orElseThrow(() -> new InvalidCredentialsException("Invalid username or password"));
 
         if (!user.isStaff()) {
